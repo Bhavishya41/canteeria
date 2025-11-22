@@ -30,6 +30,10 @@ app.get("/kitchen", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "kitchen.html"));
 });
 
+app.get("/analytics", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "analytics.html"));
+});
+
 app.use((err, req, res, next) => {
   // eslint-disable-next-line no-console
   console.error(err);

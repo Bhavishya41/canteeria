@@ -79,6 +79,17 @@ body {
   border-color: rgba(94, 234, 212, 0.6);
 }
 
+.toolbar-actions button.danger {
+  background: rgba(220, 38, 38, 0.25);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #fecaca;
+}
+
+.toolbar-actions button.danger:hover {
+  border-color: rgba(248, 113, 113, 0.6);
+  background: rgba(220, 38, 38, 0.35);
+}
+
 .kds-board {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

@@ -4,6 +4,8 @@ const emptyState = document.getElementById("orders-empty");
 const filterButtons = document.querySelectorAll("[data-filter]");
 const refreshBtn = document.getElementById("refresh-orders");
 const seedBtn = document.getElementById("seed-orders");
+const clearCompletedBtn = document.getElementById("clear-completed");
+const clearAllBtn = document.getElementById("clear-all");
 const countNodes = {
   pending: document.getElementById("pending-count"),
   preparing: document.getElementById("preparing-count"),
@@ -231,6 +233,22 @@ const seedOrders = async () => {
   }
 };
 
+const clearCompletedOrders = () => {
+  if (!confirm('Clear all picked up orders from the display?')) return;
+  
+  state.orders = state.orders.filter(order => order.status !== 'picked_up');
+  render();
+  console.log('Cleared completed orders from display');
+};
+
+const clearAllOrders = () => {
+  if (!confirm('⚠️ Clear ALL orders from the display? This cannot be undone!')) return;
+  
+  state.orders = [];
+  render();
+  console.log('Cleared all orders from display');
+};
+
 board.addEventListener("click", (event) => {
   const button = event.target.closest("button");
   if (!button) return;
@@ -260,6 +278,8 @@ filterButtons.forEach((button) => {
 
 refreshBtn.addEventListener("click", fetchOrders);
 seedBtn.addEventListener("click", seedOrders);
+clearCompletedBtn.addEventListener("click", clearCompletedOrders);
+clearAllBtn.addEventListener("click", clearAllOrders);
 
 socket.on("connect", () => {
   console.info("KDS connected", socket.id);

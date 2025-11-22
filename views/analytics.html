@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' ws: wss:;" />
+    <title>Campus Analytics</title>
+    <link rel="stylesheet" href="/analytics.css" />
+  </head>
+  <body>
+    <header class="analytics-header">
+      <div>
+        <h1>Live Business Analytics</h1>
+        <p>Real-time insights and performance metrics</p>
+      </div>
+      <div class="analytics-actions">
+        <button id="refresh-analytics">Refresh Data</button>
+        <button id="export-analytics">Export to CSV</button>
+        <button id="clear-analytics" class="danger">Clear Today's Data</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="analytics-cards" class="analytics-cards">
+        <!-- Revenue Card -->
+        <div class="analytics-card revenue">
+          <div class="card-header">
+            <div class="card-icon green">₹</div>
+            <span class="card-badge green">Live</span>
+          </div>
+          <p class="card-label">Today's Revenue</p>
+          <h3 id="total-revenue" class="card-value">—</h3>
+        </div>
+
+        <!-- Volume Card -->
+        <div class="analytics-card volume">
+          <div class="card-header">
+            <div class="card-icon blue">📦</div>
+          </div>
+          <p class="card-label">Total Orders</p>
+          <h3 id="total-orders" class="card-value">—</h3>
+        </div>
+
+        <!-- Top Item Card -->
+        <div class="analytics-card top-item">
+          <div class="card-header">
+            <div class="card-icon orange">📈</div>
+          </div>
+          <p class="card-label">Top Selling Item</p>
+          <h3 id="top-item-name" class="card-value-sm">—</h3>
+          <p id="top-item-count" class="card-subtext"></p>
+        </div>
+      </section>
+
+      <section class="analytics-table-container">
+        <div class="table-header">
+          <h3>Top Performing Items</h3>
+        </div>
+        <table class="analytics-table">
+          <thead>
+            <tr>
+              <th>Item Name</th>
+              <th>Units Sold</th>
+              <th>Trend</th>
+            </tr>
+          </thead>
+          <tbody id="top-items-tbody">
+            <tr>
+              <td colspan="3" class="empty-state">Loading data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/analytics.js" type="module"></script>
+  </body>
+</html>
