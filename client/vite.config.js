@@ -25,7 +25,7 @@ export default defineConfig({
         enabled: true
       },
       manifest: {
-        name: 'canateeria',
+        name: 'canteeria',
         short_name: 'canteeria',
         description: 'best solution for your campus cravings',
         theme_color: '#ffffff',
