@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campus KDS</title>
+    <link rel="stylesheet" href="/kitchen.css" />
+  </head>
+  <body>
+    <header class="kds-header">
+      <div>
+        <h1>Kitchen Display</h1>
+        <p>Queue-first control room for canteen orders</p>
+      </div>
+      <div class="kds-badges">
+        <div class="kds-badge">
+          <span>Pending</span>
+          <strong id="pending-count">0</strong>
+        </div>
+        <div class="kds-badge">
+          <span>Preparing</span>
+          <strong id="preparing-count">0</strong>
+        </div>
+        <div class="kds-badge">
+          <span>Ready</span>
+          <strong id="ready-count">0</strong>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="kds-toolbar">
+        <div class="filter-group">
+          <button data-filter="all" class="active">All</button>
+          <button data-filter="pending">Pending</button>
+          <button data-filter="preparing">Preparing</button>
+          <button data-filter="ready">Ready</button>
+        </div>
+        <div class="toolbar-actions">
+          <button id="refresh-orders">Refresh</button>
+          <button id="seed-orders">Inject Sample Orders</button>
+        </div>
+      </section>
+
+      <section id="orders-empty" class="kds-empty hidden">
+        <p>No orders in the queue. Awaiting next QR scan…</p>
+      </section>
+
+      <section id="orders-board" class="kds-board"></section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/kitchen.js" type="module"></script>
+  </body>
+</html>
+

@@ -1,0 +1,221 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 1.5rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+.kds-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.kds-header h1 {
+  margin: 0;
+  font-size: 1.9rem;
+}
+
+.kds-badges {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.kds-badge {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(94, 234, 212, 0.2);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  text-align: center;
+  min-width: 110px;
+}
+
+.kds-badge span {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.kds-badge strong {
+  display: block;
+  font-size: 1.4rem;
+  margin-top: 0.1rem;
+}
+
+.kds-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.filter-group button,
+.toolbar-actions button {
+  background: rgba(15, 118, 110, 0.25);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  color: #ccfbf1;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-group button.active {
+  background: #0f766e;
+}
+
+.filter-group button:hover,
+.toolbar-actions button:hover {
+  border-color: rgba(94, 234, 212, 0.6);
+}
+
+.kds-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.order-card {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(100, 116, 139, 0.4);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.order-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.order-meta {
+  font-size: 0.9rem;
+  color: #cbd5f5;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.order-items {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0;
+}
+
+.order-items li {
+  font-size: 0.9rem;
+  padding: 0.1rem 0;
+}
+
+.order-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+.order-status.pending {
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+}
+
+.order-status.preparing {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+}
+
+.order-status.ready {
+  background: rgba(34, 197, 94, 0.25);
+  color: #86efac;
+}
+
+.order-status.picked_up {
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5f5;
+}
+
+.order-status.cancelled {
+  background: rgba(248, 113, 113, 0.2);
+  color: #fecaca;
+}
+
+.order-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.35rem;
+}
+
+.order-actions button {
+  flex: 1;
+  margin-right: 0.45rem;
+  background: #0f766e;
+  border: none;
+  color: white;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.order-actions button:last-child {
+  margin-right: 0;
+}
+
+.order-actions button.secondary {
+  background: rgba(100, 116, 139, 0.45);
+}
+
+.order-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.rush-pill {
+  background: rgba(248, 113, 113, 0.2);
+  color: #fecaca;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.kds-empty {
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+  color: #94a3b8;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .kds-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .kds-badges {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
