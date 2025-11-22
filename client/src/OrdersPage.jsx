@@ -12,16 +12,15 @@ const OrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  console.log('OrdersPage - studentName from context:', studentName);
+
   useEffect(() => {
     const fetchOrders = async () => {
-      if (!studentName) {
-        setLoading(false);
-        return;
-      }
-
       try {
+        console.log('Fetching orders for student:', studentName || 'ALL ORDERS');
         const orderData = await getMyOrders(studentName);
-        // Filter out picked_up orders, or show all - you can adjust this
+        console.log('Received orders:', orderData);
+        // Show all orders except picked_up
         setOrders(orderData.filter(order => order.status !== 'picked_up'));
       } catch (error) {
         console.error('Failed to fetch orders:', error);
@@ -34,7 +33,8 @@ const OrdersPage = () => {
 
     // Listen for new orders
     const handleNewOrder = (order) => {
-      if (order.studentName === studentName) {
+      console.log('Socket received new order:', order);
+      if (!studentName || order.studentName === studentName) {
         setOrders(prev => {
           const exists = prev.find(o => o._id === order._id);
           if (exists) return prev;
@@ -45,7 +45,8 @@ const OrdersPage = () => {
 
     // Listen for order updates
     const handleOrderUpdate = (order) => {
-      if (order.studentName === studentName) {
+      console.log('Socket received order update:', order);
+      if (!studentName || order.studentName === studentName) {
         setOrders(prev => {
           const updated = prev.map(o => o._id === order._id ? order : o);
           return updated.filter(o => o.status !== 'picked_up');
@@ -99,15 +100,97 @@ const OrdersPage = () => {
   };
 
   if (!studentName) {
+    // Show message but still display all orders
     return (
-      <div className="flex flex-col min-h-screen bg-background items-center justify-center p-4">
-        <div className="section-neobrutal bg-secondary p-8 text-center max-w-md">
-          <h2 className="text-2xl font-black text-foreground mb-4">No Orders Yet</h2>
-          <p className="text-gray-600 mb-6">Please place an order first.</p>
-          <Link to="/menu" className="action-button-neobrutal">
-            Browse Menu
+      <div className="flex flex-col min-h-screen bg-background">
+        <header className="md:hidden sticky top-0 bg-secondary border-b-4 border-foreground p-4 z-20 shadow-lg">
+          <h1 className="text-3xl font-extrabold text-foreground tracking-wider text-center">
+            My Orders
+          </h1>
+        </header>
+
+        <main className="flex-1 p-4 md:p-8 pb-20">
+          <div className="section-neobrutal bg-yellow-100 border-yellow-600 p-6 mb-6">
+            <p className="text-gray-700 mb-2"><strong>Note:</strong> You haven't placed an order yet, or your name wasn't saved.</p>
+            <p className="text-sm text-gray-600">Place an order to track it here!</p>
+          </div>
+
+          <h2 className="text-4xl font-black text-foreground mb-8 border-b-4 border-foreground pb-2">
+            All Active Orders
+          </h2>
+
+          {loading ? (
+            <p className="text-center text-gray-600">Loading orders...</p>
+          ) : orders.length === 0 ? (
+            <div className="section-neobrutal bg-secondary text-center p-8">
+              <p className="text-gray-600 mb-4">No active orders.</p>
+              <Link to="/menu" className="text-accent font-bold">Start ordering!</Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {orders.map(order => (
+                <div
+                  key={order._id}
+                  className="border-4 border-foreground bg-white p-0 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col"
+                >
+                  <div
+                    className={`p-3 border-b-4 border-foreground flex justify-between items-center ${getStatusColor(
+                      order.status
+                    )}`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(order.status)}
+                      <span className="font-black text-lg uppercase">
+                        Token: #{order.tokenNumber || '—'}
+                      </span>
+                    </div>
+                    <span className="font-bold uppercase px-2 bg-white border-2 border-foreground text-xs">
+                      {order.status.replace('_', ' ')}
+                    </span>
+                  </div>
+                  <div className="p-4">
+                    <div className="mb-2 text-sm font-bold">
+                      {order.studentName || 'Anonymous'}
+                    </div>
+                    <div className="mb-2 text-sm text-gray-600">
+                      Table: {order.tableNumber || 'Takeaway'} | Payment: {order.paymentMethod?.toUpperCase() || 'UPI'}
+                    </div>
+                    <ul className="list-disc pl-5 font-medium mb-4">
+                      {order.items?.map((item, idx) => (
+                        <li key={idx}>
+                          {item.quantity || 1} x {item.name}
+                          {item.notes && <em className="text-gray-500"> ({item.notes})</em>}
+                        </li>
+                      ))}
+                    </ul>
+                    {order.notes && (
+                      <p className="text-sm text-gray-600 mb-2">
+                        <strong>Note:</strong> {order.notes}
+                      </p>
+                    )}
+                    <div className="text-sm text-gray-500">
+                      Placed: {new Date(order.createdAt).toLocaleString()}
+                    </div>
+                    {order.status === 'ready' && (
+                      <div className="bg-blue-600 text-white p-3 font-bold text-center border-2 border-foreground animate-pulse mt-4">
+                        🎉 READY FOR PICKUP AT COUNTER 🎉
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
+
+        <nav className="fixed bottom-0 left-0 right-0 h-16 bg-secondary border-t-4 border-foreground shadow-inner flex justify-around items-center z-10 md:hidden">
+          <Link to="/" className="mobile-nav-item">🏠 Home</Link>
+          <Link to="/menu" className="mobile-nav-item">🍲 Menu</Link>
+          <Link to="/cart" className="mobile-nav-item">🛒 Cart</Link>
+          <Link to="/orders" className="mobile-nav-item border-b-4 border-primary text-foreground">
+            📋 Orders
           </Link>
-        </div>
+        </nav>
       </div>
     );
   }
