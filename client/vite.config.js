@@ -25,9 +25,9 @@ export default defineConfig({
         enabled: true
       },
       manifest: {
-        name: 'My Hackathon App',
-        short_name: 'HackApp',
-        description: 'Built for the 2025 Hackathon',
+        name: 'canateeria',
+        short_name: 'canteeria',
+        description: 'best solution for your campus cravings',
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone', // Hides the browser URL bar
