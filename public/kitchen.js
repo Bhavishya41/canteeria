@@ -17,6 +17,71 @@ const state = {
 
 const socket = window.io();
 
+// --- Notifications: initialize and helper to show notifications ---
+const isNotificationSupported = "Notification" in window;
+
+const tryRegisterServiceWorker = async () => {
+  if (!("serviceWorker" in navigator)) return null;
+  const candidates = ["/sw.js", "/client/dev-dist/sw.js"];
+  for (const path of candidates) {
+    try {
+      const reg = await navigator.serviceWorker.register(path);
+      console.info("Service worker registered:", path, reg);
+      return reg;
+    } catch (err) {
+      // try next
+    }
+  }
+  console.warn("No service worker registered (none found or registration failed)");
+  return null;
+};
+
+const requestNotificationPermission = async () => {
+  if (!isNotificationSupported) return "unsupported";
+  if (Notification.permission === "granted") return "granted";
+  if (Notification.permission === "denied") return "denied";
+  try {
+    const perm = await Notification.requestPermission();
+    return perm;
+  } catch (err) {
+    console.error("Notification permission request failed", err);
+    return "denied";
+  }
+};
+
+const showNotification = async (title, options = {}) => {
+  if (!isNotificationSupported) return;
+  if (Notification.permission !== "granted") return;
+
+  // Prefer service worker notifications when available
+  try {
+    if ("serviceWorker" in navigator) {
+      const reg = await navigator.serviceWorker.ready.catch(() => null);
+      if (reg && reg.showNotification) {
+        reg.showNotification(title, options);
+        return;
+      }
+    }
+  } catch (err) {
+    // fall through to direct Notification
+  }
+
+  try {
+    new Notification(title, options);
+  } catch (err) {
+    console.error("Failed to show notification", err);
+  }
+};
+
+// Try to initialize notifications early
+requestNotificationPermission().then((perm) => {
+  if (perm === "granted") {
+    tryRegisterServiceWorker();
+  } else if (perm === "denied") {
+    console.info("Notifications denied by user");
+  }
+});
+
 const getNextStatus = (status) => {
   const idx = STATUS_PIPELINE.indexOf(status);
   if (idx === -1 || idx === STATUS_PIPELINE.length - 1) {
@@ -200,8 +265,39 @@ socket.on("connect", () => {
   console.info("KDS connected", socket.id);
 });
 
-socket.on("order:new", (order) => upsertOrder(order));
-socket.on("order:update", (order) => upsertOrder(order));
+socket.on("order:new", (order) => {
+  upsertOrder(order);
+  // notify about new important orders (optional)
+  try {
+    const title = `New order ${order.tokenNumber ?? ""}`;
+    const items = (order.items || []).map((i) => `${i.quantity || 1}× ${i.name}`).join(", ");
+    showNotification(title, {
+      body: `${order.studentName || "Anonymous"} — ${items}`,
+      tag: `order-${order._id}`,
+      renotify: true,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+socket.on("order:update", (order) => {
+  upsertOrder(order);
+  // when order becomes ready, notify
+  if (order.status === "ready") {
+    try {
+      const title = `Order ready: ${order.tokenNumber ?? ""}`;
+      const items = (order.items || []).map((i) => `${i.quantity || 1}× ${i.name}`).join(", ");
+      showNotification(title, {
+        body: `${order.studentName || "Anonymous"} — ${items}`,
+        tag: `order-${order._id}`,
+        renotify: true,
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+});
 
 fetchOrders();
 
